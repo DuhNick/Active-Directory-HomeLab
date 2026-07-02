@@ -1,6 +1,6 @@
 ## Active-Directory-HomeLab
 
-This project documents the creation of a Windows Active Directory homelab using VirtualBox. The objective was to simulate a small enterprise network by deploying a Windows Server 2019 Domain Controller and a Windows 10 client machine. Throughout this project, I configured core Active Directory services including DNS, DHCP, NAT, Organizational Units (OUs), user and group management, and Group Policy Objects (GPOs).
+This project documents the creation of a Windows Active Directory homelab using VirtualBox. The objective was to simulate a small enterprise network by deploying a Windows Server 2019 Domain Controller and a Windows 10 client machine. Throughout this project, I configured core Active Directory services including DNS, DHCP, RRAS, Organizational Units (OUs), user and group management, and Group Policy Objects (GPOs).
 
 This lab provided hands-on experience with enterprise Windows Server administration while reinforcing networking concepts such as IP addressing, NAT, DHCP, DNS, and domain authentication.
 
@@ -15,7 +15,6 @@ This lab provided hands-on experience with enterprise Windows Server administrat
 - Join a Windows 10 workstation to the domain
 - Create Organizational Units, users, and security groups
 - Deploy and validate Group Policy Objects
-- Troubleshoot authentication and Group Policy issues
 
 
 ## Network Architecture
@@ -29,7 +28,7 @@ The Windows Server 2019 Domain Controller was configured with:
 
 This configuration allows the Domain Controller to act as the gateway between the isolated internal network and the Internet while providing centralized authentication and network services for client machines.
 
-> *(Insert network diagram here)*
+![image](images/net_daigram.png)
 
 ---
 
@@ -43,7 +42,7 @@ I created two virtual machines (VMs) within Oracle VirtualBox
 - Windows 10 Pro
 
 
-> **Screenshot:** VirtualBox virtual machines (insert)
+![image](images/VM_deploy.png)
 
 ---
 
@@ -59,11 +58,12 @@ The NAT adapter provides Internet access to the Domain Controller.
 
 The Internal Network adapter creates an isolated private network that allows communication between the Domain Controller and domain-joined clients.
 
-> **Screenshot:** Network adapter configuration
+![image](images/network_adapt_1.png)
+![image](images/network_adapt_2.png)
 
 A static IPv4 address was assigned to the Internal Network interface. Because the domain controller hosts critical services such as DNS and DCHP, it must maintain a consistent IP address so that client computers always know where to locate these services. If the server's IP address were to change, clients could experience issues with name resolution, obtaining IP addresses, and authenticating to the Active Directory domain.
 
-> **Screenshot:** static IPv4 Address (insert)
+![image](images/static_ip.png)
 
 ---
 
@@ -78,7 +78,7 @@ mydomain.com
 ```
 Mydomain.com serves as a centralized administrative boundary where users, computers, and security policies can be easily managed from a single location.
 
-> **Screenshot:** Active Directory installation  (insert)
+![image](images/create_domain.png)
 
 ---
 
@@ -87,7 +87,8 @@ Mydomain.com serves as a centralized administrative boundary where users, comput
 
 To organize privileged accounts, I created an Organizational Unit named **_ADMINS** was created. Additionally, I created an administrative user account and then added the user to the **Domain Admins** security group.
 
-**Screenshot:** insert OU + insert user showing memberOf
+![image](images/createUser.png)
+![image](images/adding_admingroup.png)
 
 ---
 
@@ -95,14 +96,13 @@ To organize privileged accounts, I created an Organizational Unit named **_ADMIN
 
 The Routing and Remote Access Service (RRAS) role was installed and configured to implement Network Address Translation (NAT) on the Domain Controller’s NAT network adapter. This configuration enables computers on the isolated internal network to access external networks through the Domain Controller without exposing the private network directly. The Domain Controller effectively acts as a gateway, translating internal private IP addresses into a routable address for outbound traffic.
 
-
-> **Screenshot:** RRAS configuration  (insert)
+![image](images/configure_NAT.png)
 
 ---
 
 ## 6. DHCP Configuration
 
-The DHCP Server role was installed and configured to automatically assign IP addresses to client computers joining the network. Installing a DCHP server simplifies workstation deployment and reduces the likelihood of addressing conflicts.
+The DHCP Server role was installed and configured to automatically assign IP addresses to client computers joining the domain. Installing a DCHP server simplifies workstation deployment and reduces the likelihood of addressing conflicts.
 
 The DHCP scope included:
 
@@ -115,8 +115,8 @@ The DHCP scope included:
 | Lease Duration | 2 Days |
 
 
+![image](images/dchpserver_sucess.png)
 
-> **Screenshot:** DHCP Manager  (insert)
 
 ---
 
@@ -124,14 +124,18 @@ The DHCP scope included:
 
 A Windows 10 Pro virtual machine was deployed and connected to the Internal Network. After booting, the client successfully obtained an IP address from the DHCP server and was joined to the **mydomain.com** domain. Domain authentication was then verified by logging into the workstation using domain credentials.
 
- **Screenshot:** Successful domain join & Domain login  (insert)
+![image](images/join_domain.png)
+![image](images/login_success.png)
+
 
 
 ---
 
 ## 8. Group Policy Management
 
-I created a dedicated HR OU and placed an HR user account within it. A GPO was created and linked to the HR OU to demostrate how adminstrators can centrally manage configuration for a specific department. Additionally, I used security filtering so that the policy would only apply to the intended HR security group. After configuring the policy, I verified that it was successfully applied to the user using the following commands:
+I simulated creating a Group Policy Object (GPO) to apply a targeted policy specifically to HR user accounts, demonstrating role-based policy management and real-world Active Directory administration.
+
+First, I created a dedicated HR OU and placed an HR user account within it. I created GPO which had a rule stating that users could not access the Control Panel application. The GPO was then linked to the HR OU and I used security filtering so that the policy would only apply to the intended HR security group. After configuring the policy, I verified that it was successfully applied to the user using the following commands:
 
 ```cmd
 gpupdate /force
@@ -143,20 +147,15 @@ and
 gpresult /r
 ```
 
-> **Screenshot:** Group Policy Management
+![image](images/applying_GPO_2_user.png)
+
 
 ---
 ## 9. Password Reset 
 
-To simulated an AD administration task, I performed a password reset on a domain user account within the HR OU. Password resets are often a common task to help users who are locked out of their account or have forgotten their credentials. The password reset was perofmed using Active Directory Users and Computers by selecting the user account and assigning a temporary password. The option to require the user to change their password at next logon can also be enforced to maintain account security standards.
+To simulated an AD administration task, I performed a password reset on a domain user account within the HR OU. Password resets are often a common task to help users who are locked out of their account or have forgotten their credentials. The password reset was performed using Active Directory Users and Computers by selecting the user account and assigning a temporary password. The option to require the user to change their password at next logon can also be enforced to maintain account security standards.
 
-> **Screenshot:** password confirmation insert
-
----
-# Troubleshooting
-
-
-
+![image](images/password_reset.png)
 
 ---
 
@@ -174,7 +173,7 @@ To simulated an AD administration task, I performed a password reset on a domain
 - Group Policy Management
 - Windows Client Deployment
 - Domain Authentication
-- Troubleshooting Active Directory
+
 
 ---
 
@@ -193,6 +192,12 @@ To simulated an AD administration task, I performed a password reset on a domain
 
 # Lessons Learned
 
-
+This project help me understand how core Windows Server technologies work together to support an enterprise environment. By deploying AD from scratch, I gained pratical experience configuring domain infrastructure, managing centralized authentication, implementing services such as DNS and DCHP, and deploying Group Policy. As a result, I developed a stronger understanding of how to use Active Directory and implementing networking services.
 
 ---
+
+# References
+This project was partially completed following a youtube Active Directory lab tutorial. I recreated the environment step by step and explained each step in my own words to demostrate comprehension beyond the video. Here is the video for reference: https://www.youtube.com/watch?v=MHsI8hJmggI
+
+
+
