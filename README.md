@@ -94,7 +94,7 @@ To organize privileged accounts, I created an Organizational Unit named **_ADMIN
 
 ## 5. Routing and Remote Access (RRAS)
 
-The Routing and Remote Access Service (RRAS) role was installed and configured to implement Network Address Translation (NAT) on the Domain Controller’s NAT network adapter. This configuration enables computers on the isolated internal network to access external networks through the Domain Controller without exposing the private network directly. The Domain Controller effectively acts as a gateway, translating internal private IP addresses into a routable address for outbound traffic.
+The Routing and Remote Access Service (RRAS) role was installed and configured to implement Network Address Translation (NAT) on the Domain Controller’s Internet network adapter. This configuration enables computers on the isolated internal network to access external networks through the Domain Controller without exposing the private network directly. The Domain Controller effectively acts as a gateway, translating internal private IP addresses into a routable address for outbound traffic.
 
 ![image](images/configure_NAT.png)
 
