@@ -135,7 +135,7 @@ A Windows 10 Pro virtual machine was deployed and connected to the Internal Netw
 
 I simulated creating a Group Policy Object (GPO) to apply a targeted policy specifically to HR user accounts, demonstrating role-based policy management and real-world Active Directory administration.
 
-First, I created a dedicated HR OU and placed an HR user account within it. I created GPO which had a rule stating that users could not access the Control Panel application. The GPO was then linked to the HR OU and I used security filtering so that the policy would only apply to the intended HR security group. After configuring the policy, I verified that it was successfully applied to the user using the following commands:
+First, I created a dedicated HR OU and placed an HR user account within it. I created a GPO that had a policy stating users could not access Control Panel. The GPO was then linked to the HR OU and I used security filtering so that the policy would only apply to the intended HR security group. After configuring the policy, I verified that it was successfully applied to the user using the following commands:
 
 ```cmd
 gpupdate /force
